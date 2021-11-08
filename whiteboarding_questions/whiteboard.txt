@@ -1,0 +1,139 @@
+
+# users associations
+
+has_many :enrollments,
+    foreign_key: :student_id,
+    class_name: :Enrollment
+
+has_many :courses_taught,
+    foreign_key: :professor_id,
+    class_name: :Course,
+    optional: true
+
+
+# enrollments associations
+
+belongs_to :student,
+    foreign_key: :student_id,
+    class_name: :User
+
+belongs_to :course,
+    foreign_key: :course_id,
+    class_name: :Course
+
+
+# courses associations
+
+belongs_to :professor,
+    foreign_key: :professor_id,
+    class_name: :User
+    
+
+belongs_to :prerequisite,
+    foreign_key: :prereq_course_id,
+    class_name: :Course,
+    optional: true
+
+has_many :enrollments,
+    foreign_key: :course_id,
+    class_name: :Enrollment
+
+
+
+#------------------------------------------------------------------------------------
+
+2. FROM
+3. JOIN
+3. WHERE
+4. GROUP BY
+5. HAVING
+1. SELECT
+2. DISTINCT
+6. ORDER BY
+7. LIMIT/OFFSET
+
+#------------------------------------------------------------------------------------
+
+# == Schema Information
+#
+# Table name: nobels
+#
+#  yr          :integer
+#  subject     :string
+#  winner      :string
+
+SELECT
+    DISTINCT yr
+FROM
+    nobels
+WHERE
+    subject = 'Physics' AND yr NOT IN(
+        SELECT
+            yr
+        FROM   
+            nobels
+        WHERE
+            subject = 'Chemistry'
+    )
+
+#------------------------------------------------------------------------------------
+
+# == Schema Information
+#
+# Table name: user
+#
+#  id   :integer          not null, primary key
+#  name :string           not null
+
+
+# Table name: score
+#
+#  id   :integer           not null, primary key
+#  number :integer         not null
+#  user_id :integer        not null
+#  game_id :integer        not null
+
+
+# Table name: game
+#
+#  id   :integer           not null, primary key
+#  name :string            not null
+#  game_maker_id :integer  not null
+
+
+class User < ApplicationRecord
+
+    has_many :scores,
+        foreign_key: :user_id,
+        class_name: :Score
+
+    has_many :made_games,
+        foreign_key: :game_maker_id,
+        class_name: :Game,
+        optional: true
+
+end
+
+class Score < ApplicationRecord
+
+    belongs_to :player,
+        foreign_key: :user_id,
+        class_name: :User
+    
+    belongs_to :game,
+        foreign_key: :game_id,
+        class_name: :Game
+
+end
+
+class Game < ApplicationRecord
+
+    has_many: :scores
+        foreign_key: :game_id
+        class_name: :Score
+
+    belongs_to :game_maker,
+        foreign_key: :game_maker_id,
+        class_name: :User
+
+end
